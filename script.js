@@ -1,59 +1,58 @@
 window.onload = () => {
-    const form = document.querySelector("form");
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (e)=> {
+        e.preventDefault()
         const formData = new FormData(form);
-        const seq = formData.get("seq").split(" ");
-        const fsize = formData.get("fsize");
+        const seq = formData.get('seq').split(" ")
+        const fsize= formData.get('fsize')
 
-        renderHeader(seq);
+        renderHeader(seq)
 
-        const { fifostr, fifohit, fifofault, fiforatio } = fifo(seq, +fsize);
-        const fifoResult = document.querySelector("#fifo_result table.fifo");
+        const {fifostr,  fifohit, fifofault, fiforatio} = fifo(seq, +fsize)
+        const fifoResult = document.querySelector('#fifo_result table.fifo');
         fifoResult.innerHTML = fifostr;
-        document.querySelector("#fifo_result").innerHTML += `
+        document.querySelector('#fifo_result .faults_result').innerHTML = `
             <div class="resultblock" style="text-align: center;" >
                     <p id="hits">Number of Hits: ${fifohit}</p>
                     <p id="misses">Page Faults: ${fifofault}</p>
             </div>
-        `;
-
-        const { lrustr, lrufault, lruhit, lruratio } = lru(seq, +fsize);
-        const lruResult = document.querySelector("#lru_result table.lru");
+        `
+        
+        const {lrustr, lrufault, lruhit, lruratio} = lru(seq, +fsize)
+        const lruResult = document.querySelector('#lru_result table.lru');
         lruResult.innerHTML = lrustr;
 
-        document.querySelector("#lru_result").innerHTML += `
+        document.querySelector('#lru_result .faults_result').innerHTML = `
             <div class="resultblock" style="text-align: center;" >
                     <p id="hits">Number of Hits: ${lruhit}</p>
                     <p id="misses">Page Faults: ${lrufault}</p>
             </div>
-        `;
+        `
 
-        const { optstr, optfault, opthit } = optimal(seq, +fsize);
-        const optResult = document.querySelector("#opt_result table.opt");
+        const { optstr, optfault, opthit} = optimal(seq, +fsize)
+        const optResult = document.querySelector('#opt_result table.opt');
         optResult.innerHTML = optstr;
 
-        document.querySelector("#opt_result").innerHTML += `
+        document.querySelector('#opt_result .faults_result').innerHTML = `
             <div class="resultblock" style="text-align: center;" >
                     <p id="hits">Number of Hits: ${opthit}</p>
                     <p id="misses">Page Faults: ${optfault}</p>
             </div>
-        `;
-    });
-};
+        `
+
+    })
+}
 
 function renderHeader(seq) {
     const headerContent = seq.reduce((a, b) => {
-        return a + `<td style="padding: 13px; color: #0066cc;">${b}</td>`;
-    }, "");
+        return a + `<td style="padding: 13px; color: #0066cc;">${b}</td>`
+    }, '')
 
-    const tableContainers = document.querySelectorAll(
-        "#result table.table_header",
-    );
+    const tableContainers = document.querySelectorAll('#result table.table_header');
 
-    tableContainers.forEach((container) => {
-        container.innerHTML = `<tr>${headerContent}</tr>`;
-    });
+    tableContainers.forEach(container => {
+        container.innerHTML=`<tr>${headerContent}</tr>`
+    })
 }
 
 function transpose(l1, num) {
@@ -66,7 +65,7 @@ function transpose(l1, num) {
     }
 
     // Use the spread operator (...) along with zip function to transpose the matrix
-    const l2 = l1[0].map((col, i) => l1.map((row) => row[i]));
+    const l2 = l1[0].map((col, i) => l1.map(row => row[i]));
 
     return l2;
 }
@@ -76,13 +75,13 @@ function optimal(a, m) {
     const page = [];
     const FREE = -1;
     const optallList = [];
-    const n = a.length;
-    const countFrame = [];
+    const n = a.length
+    const countFrame = []
 
     // Initialize page with FREE values
     for (let i = 0; i < m; i++) {
         page.push(FREE);
-        countFrame.push(FREE);
+        countFrame.push(FREE)
     }
 
     for (let i = 0; i < n; i++) {
@@ -99,8 +98,7 @@ function optimal(a, m) {
             let new_slot = FREE;
             // Look for an empty slot
             for (let q = 0; q < m; q++) {
-                if (page[q] == FREE) {
-                    //has empty
+                if (page[q] == FREE) { //has empty
                     faulted = true;
                     new_slot = q;
                     countFrame[q]++;
@@ -126,8 +124,7 @@ function optimal(a, m) {
                                 break;
                             }
                         }
-                        if (!found) {
-                            //
+                        if (!found) { // 
                             max_future_q = q;
                             infinityList.push(q);
                             // break;
@@ -136,15 +133,17 @@ function optimal(a, m) {
                 }
                 faulted = true;
                 new_slot = max_future_q;
-                if (infinityList.length > 0) {
-                    console.log([countFrame]);
-                    infinityList.forEach((q) => {
-                        if (countFrame[new_slot] < countFrame[q]) {
+                if(infinityList.length > 0) {
+                    console.log([countFrame])
+                    infinityList.forEach(q => {
+                        if(countFrame[new_slot] < countFrame[q]){
                             new_slot = q;
-                        } else {
+                        }
+                        else {
                             countFrame[q]++;
                         }
-                    });
+                    })
+
                 }
             }
 
@@ -153,42 +152,40 @@ function optimal(a, m) {
         }
 
         let temp = [...page];
-        if (flag === 0) {
-            countFrame[temp.indexOf(a[i])] = 0;
-            temp[temp.indexOf(a[i])] = "red" + a[i];
-        } else {
-            for (let q = 0; q < m; q++) {
+        if(flag===0) {
+            countFrame[temp.indexOf(a[i])] = 0
+            temp[temp.indexOf(a[i])] = 'red' + a[i];
+        }
+        else {
+            for(let q = 0; q < m; q++) {
                 countFrame[q]++;
             }
         }
         // temp.reverse();
-        temp = temp.map((n) => (n === -1 ? "-" : String(n)));
+        temp = temp.map(n => n === -1 ? '-' : String(n));
         optallList.push(temp);
     }
 
     optfinalList = transpose(optallList, m);
 
-    optfinalstr = "";
+    optfinalstr = '';
     for (const lists of optfinalList) {
-        optfinalstr += "<tr>";
+        optfinalstr += '<tr>';
         for (const attr of lists) {
-            if (attr.includes("red")) {
-                optfinalstr +=
-                    '<td style="padding: 13px;background-color:#f44336;">' +
-                    attr.substring(3) +
-                    "</td>";
+            if (attr.includes('red')) {
+                optfinalstr += '<td style="padding: 13px;background-color:#f44336;">' + attr.substring(3) + '</td>';
             } else {
-                optfinalstr += '<td style="padding: 13px;">' + attr + "</td>";
+                optfinalstr += '<td style="padding: 13px;">' + attr + '</td>';
             }
         }
-        optfinalstr += "</tr>\n";
+        optfinalstr += '</tr>\n';
     }
 
     optfault = page_faults;
     opthit = n - page_faults;
-    optratio = (100.0 * opthit) / n;
+    optratio = 100.0 * opthit / n;
 
-    return { optstr: optfinalstr, optfault, opthit };
+    return { optstr: optfinalstr, optfault, opthit }
 }
 
 function fifo(sequence, frameAmt) {
@@ -199,12 +196,11 @@ function fifo(sequence, frameAmt) {
     let replaceIndex = 0;
     let temp = [];
     // FIFO algorithm
-    sequence.forEach((s) => {
+    sequence.forEach(s => {
         if (frames.includes(s)) {
             hit += 1;
-            const index = replaceIndex === 0 ? frameAmt - 1 : replaceIndex - 1;
-            if (temp[index].includes("red")) {
-                // removing old "red" value
+            const index = replaceIndex ===0 ? frameAmt-1 : replaceIndex -1
+            if (temp[index].includes('red')) { // removing old "red" value
                 temp[index] = temp[index].substring(3);
             }
         } else {
@@ -215,7 +211,7 @@ function fifo(sequence, frameAmt) {
                 frames.push(s);
             }
             temp = [...frames]; // copying the list by value
-            temp[replaceIndex] = "red" + temp[replaceIndex]; // adding "red" to the new value that is replaced
+            temp[replaceIndex] = 'red' + temp[replaceIndex]; // adding "red" to the new value that is replaced
             replaceIndex = (replaceIndex + 1) % frameAmt;
         }
         fifoallList.push([...temp]);
@@ -223,26 +219,23 @@ function fifo(sequence, frameAmt) {
 
     fifofinalList = transpose(fifoallList, frameAmt); // transpose for display on the screen
 
-    fifofinalstr = "";
-    fifofinalList.forEach((lists) => {
-        fifofinalstr += "<tr>";
-        lists.forEach((attr) => {
-            if (attr.includes("red")) {
-                fifofinalstr +=
-                    '<td style="padding: 13px;background-color:#f44336;">' +
-                    attr.substring(3) +
-                    "</td>";
+    fifofinalstr = '';
+    fifofinalList.forEach(lists => {
+        fifofinalstr += '<tr>';
+        lists.forEach(attr => {
+            if (attr.includes('red')) {
+                fifofinalstr += '<td style="padding: 13px;background-color:#f44336;">' + attr.substring(3) + '</td>';
             } else {
-                fifofinalstr += '<td style="padding: 13px;">' + attr + "</td>";
+                fifofinalstr += '<td style="padding: 13px;">' + attr + '</td>';
             }
         });
-        fifofinalstr += "</tr>\n";
+        fifofinalstr += '</tr>\n';
     });
 
     fifofault = miss;
     fifohit = hit;
     fiforatio = (100.0 * hit) / sequence.length;
-    return { fifostr: fifofinalstr, fifohit, fifofault, fiforatio };
+    return {fifostr: fifofinalstr, fifohit, fifofault, fiforatio}
 }
 
 function lru(sequence, frameAmt) {
@@ -251,10 +244,10 @@ function lru(sequence, frameAmt) {
     let hit = 0;
     let miss = 0;
     let temp = [];
-    let currentPage = [];
+    let currentPage = []
 
     // LRU algorithm
-    sequence.forEach((s) => {
+    sequence.forEach(s => {
         if (!frames.includes(s)) {
             miss += 1;
             if (frames.length === frameAmt) {
@@ -265,21 +258,19 @@ function lru(sequence, frameAmt) {
                 frames.push(s);
                 temp = [...frames];
             }
-            if (lruallList.length < frameAmt) {
-                temp[temp.length - 1] = "red" + temp[temp.length - 1];
+            if(lruallList.length < frameAmt) {
+                temp[temp.length - 1] = 'red' + temp[temp.length - 1];
             }
-            temp = (lruallList.length === frameAmt ? currentPage : temp).map(
-                (item) => {
-                    if (!frames.includes(item)) {
-                        return "red" + s;
+            temp = (lruallList.length === frameAmt ? currentPage : temp).map(item =>{
+                    if(!frames.includes(item)){
+                        return 'red' + s;
                     }
-                    return item;
-                },
-            );
-            currentPage = temp.map((item) => item.replace("red", ""));
+                    return item
+                })
+            currentPage = temp.map(item => item.replace('red',''))
         } else {
             hit += 1;
-            frames = frames.filter((frame) => frame !== s);
+            frames = frames.filter(frame => frame !== s);
             frames.push(s);
             temp = [...currentPage];
         }
@@ -289,24 +280,23 @@ function lru(sequence, frameAmt) {
     lrufinalList = transpose(lruallList, frameAmt);
 
     // Adding html tags
-    lrufinalstr = "";
-    lrufinalList.forEach((lists) => {
-        lrufinalstr += "<tr>";
-        lists.forEach((attr) => {
-            if (attr.includes("red")) {
-                lrufinalstr +=
-                    '<td style="padding: 13px;background-color:#f44336;">' +
-                    attr.substring(3) +
-                    "</td>";
+    lrufinalstr = '';
+    lrufinalList.forEach(lists => {
+        lrufinalstr += '<tr>';
+        lists.forEach(attr => {
+            if (attr.includes('red')) {
+                lrufinalstr += '<td style="padding: 13px;background-color:#f44336;">' + attr.substring(3) + '</td>';
             } else {
-                lrufinalstr += '<td style="padding: 13px;">' + attr + "</td>";
+                lrufinalstr += '<td style="padding: 13px;">' + attr + '</td>';
             }
         });
-        lrufinalstr += "</tr>\n";
+        lrufinalstr += '</tr>\n';
     });
 
     lrufault = miss;
     lruhit = hit;
     lruratio = (100.0 * hit) / sequence.length;
-    return { lrustr: lrufinalstr, lrufault, lruhit, lruratio };
+    return {lrustr: lrufinalstr, lrufault, lruhit, lruratio}
 }
+
+
