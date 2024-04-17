@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .resultblock {
+        display: block;
+        margin-top: 1.33em;
+        margin-bottom: 1.33em;
+        margin-left: 0;
+        margin-right: 0;
+        font-weight: bold;
+        font-size: 1.17em;
+      }
+      #hits {
+        color: #04aa6d;
+      }
+      #misses {
+        color: #f44336;
+      }
+      #ratio {
+        color: rgb(0, 0, 0);
+      }
+      table,
+      tr,
+      td {
+        border: 1px solid black;
+      }
+      hr {
+        border: 5% solid black;
+      }
+    </style>
+
+    <title>Page Replacement Algorithm</title>
+  </head>
+  <body style="font-family: &quot;Roboto Mono&quot;, monospace">
+    <script>
+      AOS.init();
+    </script>
+
+    <div class="container">
+      <h1 style="text-align: center; margin-top: 5%">
+        <a href="{% url 'index' %}" style="text-decoration: none"
+          >Page Replacement Algorithm Visualization</a
+        >
+      </h1>
+      <hr />
+      <div style="font-size: large">
+        <form>
+          <div class="form-row" style="text-align: center">
+            <div class="form-group col">
+              <label for="seq">Reference String</label>
+              <input
+                type="text"
+                name="seq"
+                id="seq"
+                class="form-control"
+                placeholder="ex. 7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1"
+                style="width: 50%; margin: auto"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col" style="text-align: center">
+              <label for="fsize">Frame Size</label>
+              <input
+                require="true"
+                type="text"
+                name="fsize"
+                id="fsize"
+                class="form-control"
+                placeholder="ex. 3"
+                style="width: 9%; margin: auto; text-align: center"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col" style="text-align: center">
+              <input type="submit" class="btn btn-primary" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div>
+      <hr />
+
+      <div id="result">
+        <div id="fifo_result">
+          <hr />
+          <h1 data-aos="fade-right" style="text-align: center">
+            Method 1: First In First Out (FIFO)
+          </h1>
+          <br />
+          <table
+            class="table_header"
+            data-aos="fade-right"
+            style="
+              margin: auto;
+              font-size: 1.5em;
+              font-weight: bolder;
+              text-align: center;
+            "
+          ></table>
+          <table
+            class="fifo"
+            data-aos="fade-right"
+            style="
+              margin: auto;
+              font-size: 1.5em;
+              font-weight: bolder;
+              text-align: center;
+            "
+          ></table>
+        </div>
+
+        <div id="lru_result">
+          <hr />
+          <h1 data-aos="fade-right" style="text-align: center">
+            Method 2: Least Recently Used (LRU)
+          </h1>
+          <br />
+          <table
+            class="table_header"
+            data-aos="fade-right"
+            style="
+              margin: auto;
+              font-size: 1.5em;
+              font-weight: bolder;
+              text-align: center;
+            "
+          ></table>
+          <table
+            class="lru"
+            data-aos="fade-right"
+            style="
+              margin: auto;
+              font-size: 1.5em;
+              font-weight: bolder;
+              text-align: center;
+            "
+          ></table>
+        </div>
+
+        <div id="opt_result">
+          <hr />
+          <h1 data-aos="fade-right" style="text-align: center">
+            Method 3: Optimal Page Replacement (OPT)
+          </h1>
+          <br />
+          <table
+            class="table_header"
+            data-aos="fade-right"
+            style="
+              margin: auto;
+              font-size: 1.5em;
+              font-weight: bolder;
+              text-align: center;
+            "
+          ></table>
+          <table
+            class="opt"
+            data-aos="fade-right"
+            style="
+              margin: auto;
+              font-size: 1.5em;
+              font-weight: bolder;
+              text-align: center;
+            "
+          ></table>
+        </div>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+
+  <footer
+    style="font-family: &quot;Roboto Mono&quot;, monospace; margin-top: 200px"
+  >
+    <hr />
+    SIIT CSS225: Operating System Final Project by Nutchanon Charnwutiwong,
+    Worapas Pruktipinyopap, Veerawich Kaoaien<br />
+    Semester 2/2020
+    <br />
+    <span>&#169;nutchanon_c</span>
+  </footer>
+</html>
