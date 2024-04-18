@@ -101,6 +101,9 @@ function optimal(a, m) {
                 if (page[q] == FREE) { //has empty
                     faulted = true;
                     new_slot = q;
+                    page.forEach((_, index) => {
+                        countFrame[index]++;
+                    })
                     countFrame[q]++;
                     break;
                 }
