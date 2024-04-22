@@ -3,7 +3,7 @@ window.onload = () => {
     form.addEventListener('submit', (e)=> {
         e.preventDefault()
         const formData = new FormData(form);
-        const seq = formData.get('seq').split(" ")
+        const seq = formData.get('seq').replace(/\t|\s+/g, ' ').split(" ")
         const fsize= formData.get('fsize')
 
         renderHeader(seq)
@@ -270,16 +270,18 @@ function lru(sequence, frameAmt) {
                     }
                     return item
                 })
-            currentPage = temp.map(item => item.replace('red',''))
+            
         } else {
             hit += 1;
             frames = frames.filter(frame => frame !== s);
             frames.push(s);
+            let indexOfHit = currentPage.indexOf(s)
+            currentPage[indexOfHit] = 'blue' + s;
             temp = [...currentPage];
         }
         lruallList.push([...temp]);
     });
-
+    currentPage = temp.map(item => item.replace('red','').replace('blue',''));
     lrufinalList = transpose(lruallList, frameAmt);
 
     // Adding html tags
@@ -289,7 +291,11 @@ function lru(sequence, frameAmt) {
         lists.forEach(attr => {
             if (attr.includes('red')) {
                 lrufinalstr += '<td style="padding: 13px;background-color:#f44336;">' + attr.substring(3) + '</td>';
-            } else {
+            }
+            else if(attr.includes('blue')) {
+                lrufinalstr += '<td style="padding: 13px;background-color: rgba(52, 198, 235, 0.2);">' + attr.substring(4) + '</td>';
+            }
+            else {
                 lrufinalstr += '<td style="padding: 13px;">' + attr + '</td>';
             }
         });
