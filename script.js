@@ -101,10 +101,11 @@ function optimal(a, m) {
                 if (page[q] == FREE) { //has empty
                     faulted = true;
                     new_slot = q;
-                    page.forEach((_, index) => {
+                    page.forEach((item, index) => {
                         countFrame[index]++;
                     })
                     countFrame[q]++;
+                    
                     break;
                 }
             }
@@ -137,7 +138,6 @@ function optimal(a, m) {
                 faulted = true;
                 new_slot = max_future_q;
                 if(infinityList.length > 0) {
-                    console.log([countFrame])
                     infinityList.forEach(q => {
                         if(countFrame[new_slot] < countFrame[q]){
                             new_slot = q;
@@ -261,7 +261,7 @@ function lru(sequence, frameAmt) {
                 frames.push(s);
                 temp = [...frames];
             }
-            if(lruallList.length < frameAmt) {
+            if(currentPage.length < frameAmt) {
                 temp[temp.length - 1] = 'red' + temp[temp.length - 1];
             }
             temp = (lruallList.length === frameAmt ? currentPage : temp).map(item =>{
@@ -270,7 +270,6 @@ function lru(sequence, frameAmt) {
                     }
                     return item
                 })
-            
         } else {
             hit += 1;
             frames = frames.filter(frame => frame !== s);
@@ -279,9 +278,10 @@ function lru(sequence, frameAmt) {
             currentPage[indexOfHit] = 'blue' + s;
             temp = [...currentPage];
         }
+        currentPage = temp.map(item => item.replace('red','').replace('blue',''))
         lruallList.push([...temp]);
     });
-    currentPage = temp.map(item => item.replace('red','').replace('blue',''));
+
     lrufinalList = transpose(lruallList, frameAmt);
 
     // Adding html tags
@@ -307,5 +307,3 @@ function lru(sequence, frameAmt) {
     lruratio = (100.0 * hit) / sequence.length;
     return {lrustr: lrufinalstr, lrufault, lruhit, lruratio}
 }
-
-
